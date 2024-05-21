@@ -23,7 +23,7 @@ const MyComponent = ({label, hook, value}) => {
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('saif@gmail.com');
-  const [password, setPassword] = useState('123test');
+  const [password, setPassword] = useState('1234test');
 
   const handleLogin = () => {
     auth()
