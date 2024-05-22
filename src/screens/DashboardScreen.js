@@ -1,4 +1,3 @@
-// src/screens/DashboardScreen.js
 import React from 'react';
 import {View, Text, Button, Alert} from 'react-native';
 import auth from '@react-native-firebase/auth';
