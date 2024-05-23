@@ -16,7 +16,7 @@ const LoginScreen = ({navigation}) => {
         const temp = email;
         setEmail('');
         setPassword('');
-        navigation.navigate('Dashboard', {email: temp});
+        navigation.navigate('AdminPortalScreen', {email: temp});
       })
       .catch(error => {
         let message = 'An error occurred. Please try again.';
