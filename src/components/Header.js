@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     width: '100%',
     height: 60,
+    // backgroundColor: '#4A98A9',
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
