@@ -5,20 +5,28 @@ import auth from '@react-native-firebase/auth';
 import colors from '../styles/colors';
 
 const LoginScreen = ({navigation}) => {
-  const [email, setEmail] = useState('saif@gmail.com');
-  const [password, setPassword] = useState('123test');
+  // Hooks to manage the state of email and password inputs
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
+  // Function to handle login logic
   const handleLogin = () => {
+    // Firebase Authentication: Sign in with email and password
     auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
-        console.log('User Login successful!');
+        console.log('Teacher Login successful!');
+        
+        // Store the email temporarily
         const temp = email;
+        // Clear the input fields
         setEmail('');
         setPassword('');
-        navigation.navigate('AdminPortalScreen', {email: temp});
+        // Navigate to the TeacherPortal screen and pass the email as a parameter
+        navigation.navigate('TeacherPortalScreen', {email: temp});
       })
       .catch(error => {
+        // Handle Firebase authentication errors
         let message = 'An error occurred. Please try again.';
         switch (error.code) {
           case 'auth/invalid-email':
@@ -34,8 +42,7 @@ const LoginScreen = ({navigation}) => {
             message = 'This user account is disabled.';
             break;
           case 'auth/invalid-credential':
-            message =
-              'The supplied credentials are incorrect, malformed or expired.';
+            message = 'The supplied credentials are incorrect, malformed or expired.';
             break;
         }
         Alert.alert('Error', message);
