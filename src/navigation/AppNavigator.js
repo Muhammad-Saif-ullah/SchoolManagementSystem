@@ -17,6 +17,18 @@ import TimetablesScreen from '../screens/TimetablesScreen';
 
 import Header from '../components/Header';
 
+import WelcomeScreen from '../screens/WelcomeScreen';
+import LoginAsAdmin from '../screens/LoginAsAdmin'; // You need to create this screen
+import LoginAsTeacher from '../screens/LoginAsTeacher'; // You need to create this screen
+import LoginAsStudent from '../screens/LoginAsStudent';
+import StudentPortal from '../screens/StudentPortal';
+import Teacher_Login from '../screens/Teacher_Login';
+import StudentRegistrationForm from '../screens/StudentRegistrationForm.js';
+import Teacher_Portal_Screen from '../screens/Teacher_Portal_Screen.js';
+// import another from '../screens/another';
+
+
+
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
@@ -28,6 +40,7 @@ const AppNavigator = () => {
             <Header title={route.name} />
           ),
         }}>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="AdminPortalScreen" component={AdminPortalScreen} />
         <Stack.Screen
@@ -48,7 +61,6 @@ const AppNavigator = () => {
           component={AddNewFeeStatusScreen}
         />
         <Stack.Screen name="ViewReportsScreen" component={ViewReportScreen} />
-
         <Stack.Screen
           name="ViewStudentAgeRecordScreen"
           component={ViewStudentAgeRecordScreen}
@@ -56,6 +68,14 @@ const AppNavigator = () => {
         <Stack.Screen name="ResultSheetScreen" component={ResultSheetScreen} />
         <Stack.Screen name="SyllabusScreen" component={SyllabusScreen} />
         <Stack.Screen name="TimetablesScreen" component={TimetablesScreen} />
+        <Stack.Screen name="Dashboard" component={DashboardScreen} />
+        <Stack.Screen name="LoginAsAdmin" component={LoginAsAdmin} />
+        <Stack.Screen name="LoginAsTeacher" component={Teacher_Login} />
+        <Stack.Screen name="TeacherPortalScreen" component={Teacher_Portal_Screen} />
+        <Stack.Screen name="LoginAsStudent" component={LoginAsStudent} />
+        <Stack.Screen name="StudentPortal" component={StudentPortal} />
+        <Stack.Screen name="StudentRegistrationForm" component={StudentRegistrationForm} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
