@@ -69,7 +69,7 @@ const LoginAsStudent = ({ navigation }) => {
       </TouchableOpacity>
       <View style={styles.newStudentContainer}>
         <Text style={styles.newStudentText}>New Student?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('StudentForm')}>
+        <TouchableOpacity onPress={() => navigation.navigate('StudentRegistrationForm')}>
           <Text style={styles.signUpText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
