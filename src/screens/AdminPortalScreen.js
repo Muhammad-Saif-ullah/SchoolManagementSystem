@@ -2,7 +2,11 @@ import React from 'react';
 import { View, Button, Alert, StyleSheet } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
+var email = '';
+
 const AdminPortalScreen = ({ route, navigation }) => {
+  email = route.params.email;
+
   const handleLogout = () => {
     Alert.alert(
       'Confirm Logout',
@@ -33,7 +37,7 @@ const AdminPortalScreen = ({ route, navigation }) => {
   };
 
   const handlePress = screen => {
-    navigation.navigate(screen, { email: route.params.email });
+    navigation.navigate(screen);
   };
 
   return (

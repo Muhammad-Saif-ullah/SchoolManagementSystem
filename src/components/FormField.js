@@ -1,19 +1,25 @@
 import React from 'react';
-import {Text, View, StyleSheet, TextInput} from 'react-native';
+import { Text, View, StyleSheet, TextInput } from 'react-native';
 
-const FormField = ({label, placeholder}) => (
-  <View style={styles.inputGroupWide}>
+const FormField = ({ label, placeholder, hook, value, keyboard }) => (
+  <View style={styles.inputGroup}>
     <Text>{label}</Text>
-    <TextInput style={styles.wideInput} placeholder={placeholder} />
+    <TextInput
+      style={[styles.input]}
+      placeholder={placeholder}
+      onChangeText={hook}
+      keyboardType={keyboard}
+      value={value}
+    />
   </View>
 );
 
 const styles = StyleSheet.create({
-  inputGroupWide: {
+  inputGroup: {
     width: '100%',
     marginBottom: 10,
   },
-  wideInput: {
+  input: {
     borderRadius: 15,
     borderWidth: 1,
     height: 40,
