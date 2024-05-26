@@ -14,18 +14,23 @@ import ViewStudentAgeRecordScreen from '../screens/ViewStudentAgeRecordScreen';
 import ResultSheetScreen from '../screens/ResultSheetScreen';
 import SyllabusScreen from '../screens/SyllabusScreen';
 import TimetablesScreen from '../screens/TimetablesScreen';
+import DashboardScreen from '../screens/DashboardScreen';
+import ViewMarks from '../screens/ViewMarks';
+import ViewPreviousRecords from '../screens/ViewPreviousRecords';
+import ViewFeeStatus from '../screens/ViewFeeStatus';
+import ViewTimetable from '../screens/ViewTimetable';
+import ViewSyllabus from '../screens/ViewSyllabus';
 
 import Header from '../components/Header';
 
 import WelcomeScreen from '../screens/WelcomeScreen';
-import LoginAsAdmin from '../screens/LoginAsAdmin'; // You need to create this screen
-import LoginAsTeacher from '../screens/LoginAsTeacher'; // You need to create this screen
+import LoginAsAdmin from '../screens/LoginAsAdmin';
+import LoginAsTeacher from '../screens/LoginAsTeacher';
 import LoginAsStudent from '../screens/LoginAsStudent';
 import StudentPortal from '../screens/StudentPortal';
 import Teacher_Login from '../screens/Teacher_Login';
 import StudentRegistrationForm from '../screens/StudentRegistrationForm.js';
 import Teacher_Portal_Screen from '../screens/Teacher_Portal_Screen.js';
-// import another from '../screens/another';
 
 
 
@@ -75,6 +80,11 @@ const AppNavigator = () => {
         <Stack.Screen name="LoginAsStudent" component={LoginAsStudent} />
         <Stack.Screen name="StudentPortal" component={StudentPortal} />
         <Stack.Screen name="StudentRegistrationForm" component={StudentRegistrationForm} />
+        <Stack.Screen name="ViewMarks" component={ViewMarks} />
+        {/* <Stack.Screen name="ViewPreviousRecords" component={ViewPreviousRecords} /> */}
+        <Stack.Screen name="ViewFeeStatus" component={ViewFeeStatus} />
+        <Stack.Screen name="ViewTimetable" component={ViewTimetable} />
+        {/* <Stack.Screen name="ViewSyllabus" component={ViewSyllabus} /> */}
 
       </Stack.Navigator>
     </NavigationContainer>
