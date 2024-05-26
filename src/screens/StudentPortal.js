@@ -1,4 +1,3 @@
-//working on it
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import auth from '@react-native-firebase/auth';
@@ -6,13 +5,6 @@ import colors from '../styles/colors';
 
 const StudentPortal = ({ navigation, route }) => {
   const { name, regNo } = route.params;
-
-  const handleButtonPress = (buttonName) => {
-    // Perform functionality based on the button name
-    console.log(`Button "${buttonName}" pressed.`);
-    // For example, navigation to DummyScreen.js
-    navigation.navigate('DummyScreen');
-  };
 
   const handleLogout = () => {
     auth()
@@ -31,11 +23,11 @@ const StudentPortal = ({ navigation, route }) => {
       <Text style={styles.welcomeText}>Welcome {name}!</Text>
       <Text style={styles.regNoText}>Your Registration Number: {regNo}</Text>
       <View style={styles.buttonContainer}>
-        <CustomButton title="View Marks" onPress={() => handleButtonPress("View Marks")} />
-        <CustomButton title="View Previous Records" onPress={() => handleButtonPress("View Previous Records")} />
-        <CustomButton title="View Fee Status" onPress={() => handleButtonPress("View Fee Status")} />
-        <CustomButton title="View Timetable" onPress={() => handleButtonPress("View Timetable")} />
-        <CustomButton title="View Syllabus" onPress={() => handleButtonPress("View Syllabus")} />
+        <CustomButton title="View Marks" onPress={() => navigation.navigate('ViewMarks', { regNo })}/>
+        <CustomButton title="View Previous Records" onPress={() => navigation.navigate('ViewPreviousRecords', { regNo })}/>
+        <CustomButton title="View Fee Status" onPress={() => navigation.navigate('ViewFeeStatus', { regNo })} />
+        <CustomButton title="View Timetable" onPress={() => navigation.navigate('ViewTimetable', { regNo })} />
+        <CustomButton title="View Syllabus" onPress={() => navigation.navigate('ViewSyllabus', { regNo })} />
       </View>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
@@ -44,8 +36,8 @@ const StudentPortal = ({ navigation, route }) => {
   );
 };
 
-const CustomButton = ({ title, onPress }) => (
-  <TouchableOpacity style={styles.button} onPress={onPress}>
+const CustomButton = ({ title, onPress, color }) => (
+  <TouchableOpacity style={[styles.button]} onPress={onPress}>
     <Text style={styles.buttonText}>{title}</Text>
   </TouchableOpacity>
 );
@@ -72,11 +64,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: colors.secondary,
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 25,
     marginBottom: 10,
+    backgroundColor: "#58D68D"   // decide color
   },
   buttonText: {
     color: '#fff',
@@ -95,6 +87,3 @@ const styles = StyleSheet.create({
 });
 
 export default StudentPortal;
-
-
-
