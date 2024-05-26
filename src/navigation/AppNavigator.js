@@ -20,6 +20,7 @@ import ViewPreviousRecords from '../screens/ViewPreviousRecords';
 import ViewFeeStatus from '../screens/ViewFeeStatus';
 import ViewTimetable from '../screens/ViewTimetable';
 import ViewSyllabus from '../screens/ViewSyllabus';
+import SyllabusSubjects from '../screens/SyllabusSubjects';
 
 import Header from '../components/Header';
 
@@ -84,7 +85,8 @@ const AppNavigator = () => {
         {/* <Stack.Screen name="ViewPreviousRecords" component={ViewPreviousRecords} /> */}
         <Stack.Screen name="ViewFeeStatus" component={ViewFeeStatus} />
         <Stack.Screen name="ViewTimetable" component={ViewTimetable} />
-        {/* <Stack.Screen name="ViewSyllabus" component={ViewSyllabus} /> */}
+        <Stack.Screen name="ViewSyllabus" component={ViewSyllabus} />
+        <Stack.Screen name="SyllabusSubjects" component={SyllabusSubjects} />
 
       </Stack.Navigator>
     </NavigationContainer>
