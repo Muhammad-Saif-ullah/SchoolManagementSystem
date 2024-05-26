@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 
-const LoginAsAdmin = () => {
+const LoginAsAdmin = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Login as Admin Screen</Text>
+      <Button title='Go to Admin Portal' onPress={
+        () => navigation.navigate('AdminPortalScreen')
+      }></Button>
     </View>
   );
 };

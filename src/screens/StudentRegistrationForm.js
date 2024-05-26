@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import colors from '../styles/colors';
 
+
+// THIS SCREEN IS NOT CURRENTLY IN USE. REFER TO STUDENTREGISTRATIONSCREEN.JS INSTEAD.
+
 const StudentRegistrationForm = ({ navigation }) => {
 
   const [regNo, setRegNo] = useState('');
