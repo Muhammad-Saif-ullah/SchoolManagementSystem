@@ -1,8 +1,9 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LoginScreen from '../screens/LoginScreen';
+import DashboardScreen from '../screens/DashboardScreen';
 import AdminPortalScreen from '../screens/AdminPortalScreen';
 import AssignClassesScreen from '../screens/AssignClassesScreen';
 import StudentRegistrationScreen from '../screens/StudentRegistrationScreen';
@@ -13,7 +14,9 @@ import ViewReportScreen from '../screens/ViewReportsScreen';
 import ViewStudentAgeRecordScreen from '../screens/ViewStudentAgeRecordScreen';
 import ResultSheetScreen from '../screens/ResultSheetScreen';
 import SyllabusScreen from '../screens/SyllabusScreen';
+import UploadSyllabusScreen from '../screens/UploadSyllabusScreen';
 import TimetablesScreen from '../screens/TimetablesScreen';
+import UploadTimetableScreen from '../screens/UploadTimetableScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import ViewMarks from '../screens/ViewMarks';
 import ViewPreviousRecords from '../screens/ViewPreviousRecords';
@@ -41,7 +44,7 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          header: ({navigation, route, options, back}) => (
+          header: ({ navigation, route, options, back }) => (
             <Header title={route.name} />
           ),
         }}>
@@ -72,9 +75,11 @@ const AppNavigator = () => {
         />
         <Stack.Screen name="ResultSheetScreen" component={ResultSheetScreen} />
         <Stack.Screen name="SyllabusScreen" component={SyllabusScreen} />
+        <Stack.Screen name="UploadSyllabusScreen" component={UploadSyllabusScreen} />
         <Stack.Screen name="TimetablesScreen" component={TimetablesScreen} />
-        <Stack.Screen name="Dashboard" component={DashboardScreen} />
-        <Stack.Screen name="LoginAsAdmin" component={LoginAsAdmin} />
+        <Stack.Screen name="UploadTimetableScreen" component={UploadTimetableScreen} />
+        <Stack.Screen name="DashboardScreen" component={DashboardScreen} />
+        <Stack.Screen name="LoginAsAdmin" component={LoginScreen} />
         <Stack.Screen name="LoginAsTeacher" component={Teacher_Login} />
         <Stack.Screen name="TeacherPortalScreen" component={Teacher_Portal_Screen} />
         <Stack.Screen name="LoginAsStudent" component={LoginAsStudent} />
