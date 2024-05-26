@@ -27,7 +27,7 @@ const StudentPortal = ({ navigation, route }) => {
         <CustomButton title="View Previous Records" onPress={() => navigation.navigate('ViewPreviousRecords', { regNo })}/>
         <CustomButton title="View Fee Status" onPress={() => navigation.navigate('ViewFeeStatus', { regNo })} />
         <CustomButton title="View Timetable" onPress={() => navigation.navigate('ViewTimetable', { regNo })} />
-        <CustomButton title="View Syllabus" onPress={() => navigation.navigate('ViewSyllabus', { regNo })} />
+        <CustomButton title="View Syllabus" onPress={() => navigation.navigate('SyllabusSubjects', { regNo })} />
       </View>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>

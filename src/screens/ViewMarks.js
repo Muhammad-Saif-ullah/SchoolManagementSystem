@@ -1,53 +1,88 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import { List } from 'react-native-paper';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import colors from '../styles/colors';
 
-const ViewMarks = () => {
+const ViewMarks = ({ route }) => {
+  const { regNo } = route.params;
   const [marks, setMarks] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMarks = async () => {
       try {
-        const marksRef = firestore().collection('marks');
-        const snapshot = await marksRef.get();
-        const marksData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const marksSnapshot = await firestore()
+          .collection(`Students/${regNo}/Marks`)
+          .get();
+
+        const marksData = marksSnapshot.docs.map(doc => {
+          const { FirstTerm, MidTerm, FinalTerm } = doc.data();
+          return {
+            id: doc.id,
+            subject: doc.id,
+            FirstTerm,
+            MidTerm,
+            FinalTerm,
+          };
+        });
+
         setMarks(marksData);
-        setLoading(false);
       } catch (error) {
-        console.error('Error fetching marks: ', error);
-        setLoading(false);
+        console.error('Error fetching marks:', error);
       }
     };
 
     fetchMarks();
- }, []);
+  }, [regNo]);
 
-  if (loading) {
+  const getTotalMarks = async (subjectName) => {
+    try {
+      const subjectDoc = await firestore().collection('Subjects').doc(subjectName).get();
+      const marksDistribution = subjectDoc.data().marksDistribution;
+      return marksDistribution;
+    } catch (error) {
+      console.error('Error fetching total marks:', error);
+      return {
+        FirstTermTotal: 0,
+        MidTermTotal: 0,
+        FinalTermTotal: 0,
+      };
+    }
+  };
+
+  const renderItem = ({ item }) => {
+    const { subject, FirstTerm, MidTerm, FinalTerm } = item;
+    const [firstTermTotal, setFirstTermTotal] = useState(0);
+    const [midTermTotal, setMidTermTotal] = useState(0);
+    const [finalTermTotal, setFinalTermTotal] = useState(0);
+
+    useEffect(() => {
+      const fetchTotalMarks = async () => {
+        const totalMarks = await getTotalMarks(subject);
+        setFirstTermTotal(totalMarks.FirstTermTotal);
+        setMidTermTotal(totalMarks.MidTermTotal);
+        setFinalTermTotal(totalMarks.FinalTermTotal);
+      };
+
+      fetchTotalMarks();
+    }, [subject]);
+
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View style={styles.item}>
+        <Text style={styles.subjectText}>{subject}</Text>
+        <View style={styles.marksContainer}>
+          <Text>{`${FirstTerm} / ${firstTermTotal}`}</Text>
+          <Text>{`${MidTerm} / ${midTermTotal}`}</Text>
+          <Text>{`${FinalTerm} / ${finalTermTotal}`}</Text>
+        </View>
       </View>
     );
-  }
+  };
 
   return (
     <View style={styles.container}>
       <FlatList
         data={marks}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <List.Item
-            title={item.name}
-            description={`Marks: ${item.marks}`}
-            left={props => <List.Icon {...props} icon="clipboard" />}
-          />
-        )}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
@@ -56,14 +91,21 @@ const ViewMarks = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    padding: 20,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+  },
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  subjectText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  marksContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
