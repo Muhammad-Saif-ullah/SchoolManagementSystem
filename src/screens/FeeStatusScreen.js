@@ -1,9 +1,9 @@
 import React from 'react';
-import {View, Button, StyleSheet} from 'react-native';
+import { View, Button, StyleSheet } from 'react-native';
 
-const FeeStatusScreen = ({route, navigation}) => {
+const FeeStatusScreen = ({ route, navigation }) => {
   const handlePress = screen => {
-    navigation.navigate(screen, {email: route.params.email});
+    navigation.navigate(screen);
   };
 
   return (
