@@ -14,7 +14,7 @@ const LoginAsStudent = ({ navigation }) => {
     }
 
     auth()
-      .signInWithEmailAndPassword(`${regNo}@school.com`, password)
+      .signInWithEmailAndPassword(`std${regNo}@school.com`, password)
       .then(() => {
         console.log('Student Login successful!');
         navigation.navigate('StudentPortal', {regNo});
@@ -62,17 +62,9 @@ const LoginAsStudent = ({ navigation }) => {
       />
       <TouchableOpacity
         style={styles.button}
-        // onPress={handleLogin}>       //change to this code, niche wala code to test
-        onPress={() => navigation.navigate('StudentPortal', {regNo})} //wrong code 
-        >
+        onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <View style={styles.newStudentContainer}>
-        <Text style={styles.newStudentText}>New Student?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('StudentForm')}>
-          <Text style={styles.signUpText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
