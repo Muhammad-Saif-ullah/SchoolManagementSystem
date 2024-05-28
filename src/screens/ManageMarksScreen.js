@@ -144,7 +144,46 @@ const ManageMarksScreen = () => {
       console.error("Error removing mark: ", error);
     }
   };
-  
+
+  const getTotalMarks = (subjectName, markType) => {
+    if (markType === 'FirstTerm' || markType === 'MidTerm') {
+      switch (subjectName) {
+        case 'English':
+        case 'Urdu':
+        case 'Maths':
+        case 'Nazra-e-Quran':
+        case 'General Knowledge':
+        case 'Islamyat':
+        case 'Social Study':
+          return '/50';
+        case 'Computer Part 1':
+          return '/35';
+        case 'Computer Part 2':
+          return '/15';
+        default:
+          return '';
+      }
+    } else if (markType === 'FinalTerm') {
+      switch (subjectName) {
+        case 'English':
+        case 'Urdu':
+        case 'Maths':
+        case 'Nazra-e-Quran':
+        case 'General Knowledge':
+        case 'Islamyat':
+        case 'Social Study':
+          return '/100';
+        case 'Computer Part 1':
+          return '/70';
+        case 'Computer Part 2':
+          return '/30';
+        default:
+          return '';
+      }
+    } else {
+      return '';
+    }
+  };
 
   const renderStudent = ({ item }) => (
     <View style={styles.studentContainer}>
@@ -156,7 +195,7 @@ const ManageMarksScreen = () => {
             <TextInput
               style={styles.input}
               value={mark.FirstTerm}
-              placeholder="First Term"
+              placeholder={`First Term ${getTotalMarks(mark.subjectName, 'FirstTerm')}`}
               onChangeText={text => updateMark(item.id, mark.subjectName, 'FirstTerm', text)}
             />
             <Button
@@ -166,8 +205,9 @@ const ManageMarksScreen = () => {
             <TextInput
               style={styles.input}
               value={mark.MidTerm}
-              placeholder="Mid Term"
-              onChangeText={text => updateMark(item.id, mark.subjectName, 'MidTerm', text)}
+              placeholder={`Mid Term ${getTotalMarks(mark.subjectName, 'MidTerm')}`}
+              onChangeText
+              ={text => updateMark(item.id, mark.subjectName, 'MidTerm', text)}
             />
             <Button
               title="Remove Midterm Marks"
@@ -176,7 +216,7 @@ const ManageMarksScreen = () => {
             <TextInput
               style={styles.input}
               value={mark.FinalTerm}
-              placeholder="Final Term"
+              placeholder={`Final Term ${getTotalMarks(mark.subjectName, 'FinalTerm')}`}
               onChangeText={text => updateMark(item.id, mark.subjectName, 'FinalTerm', text)}
             />
             <Button
