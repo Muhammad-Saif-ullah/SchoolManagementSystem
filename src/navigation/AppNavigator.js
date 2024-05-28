@@ -17,7 +17,6 @@ import SyllabusScreen from '../screens/SyllabusScreen';
 import UploadSyllabusScreen from '../screens/UploadSyllabusScreen';
 import TimetablesScreen from '../screens/TimetablesScreen';
 import UploadTimetableScreen from '../screens/UploadTimetableScreen';
-import DashboardScreen from '../screens/DashboardScreen';
 import ViewMarks from '../screens/ViewMarks';
 import ViewPreviousRecords from '../screens/ViewPreviousRecords';
 import ViewFeeStatus from '../screens/ViewFeeStatus';
