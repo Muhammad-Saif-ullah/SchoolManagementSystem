@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, Button, Alert, StyleSheet } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 var email = '';
@@ -42,6 +42,9 @@ const AdminPortalScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.subtitle}>
+        <Text>Welcome, {email}</Text>
+      </View>
       <View style={styles.buttonWrapper}>
         <Button
           title="Assign Classes"
@@ -52,6 +55,12 @@ const AdminPortalScreen = ({ route, navigation }) => {
         <Button
           title="Register Student"
           onPress={() => handlePress('StudentRegistrationScreen')}
+        />
+      </View>
+      <View style={styles.buttonWrapper}>
+        <Button
+          title="Manage Students"
+          onPress={() => handlePress('ManageStudentsScreen')}
         />
       </View>
       <View style={styles.buttonWrapper}>
@@ -99,6 +108,9 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: 15,
+  },
+  subtitle: {
+    marginBottom: 20,
   },
 });
 
