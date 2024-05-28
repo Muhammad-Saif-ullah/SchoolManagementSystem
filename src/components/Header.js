@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,11 @@ import {
   StyleSheet,
   StatusBar,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/AntDesign';
 import colors from '../styles/colors';
 
-const Header = ({title}) => {
+const Header = ({ title }) => {
   const navigation = useNavigation();
   const canGoBack = navigation.canGoBack();
 
@@ -21,16 +21,13 @@ const Header = ({title}) => {
   return (
     <View style={styles.headerContainer}>
       {canGoBack && (
-        <TouchableOpacity
+        <Icon
+          name="leftcircleo"
+          size={25}
+          color={colors.secondary}
+          onPress={() => navigation.goBack()}
           style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          {/* <Icon
-            name="chevron-back-outline"
-            size={24}
-            color={colors.secondary}
-          /> */}
-          <Icon name="chevron-back" size={24} color={colors.secondary} />
-        </TouchableOpacity>
+        />
       )}
       <Text style={styles.headerText}>{title}</Text>
     </View>
@@ -39,20 +36,15 @@ const Header = ({title}) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    width: '100%',
-    height: 80,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
+    flexDirection: 'row',
     alignItems: 'center',
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-    position: 'relative',
+    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: colors.primary,
   },
   backButton: {
     position: 'absolute',
-    left: 10,
-    top: '50%',
-    transform: [{translateY: -12}],
+    left: 18,
   },
   headerText: {
     color: colors.secondary,
