@@ -12,7 +12,7 @@ const WelcomeScreen = ({ navigation }) => {
       <Text style={styles.title}>Welcome to School Management System</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('AdminPortalScreen')}>
+        onPress={() => navigation.navigate('LoginScreen')}>
         <Text style={styles.buttonText}>Login as Admin</Text>
       </TouchableOpacity>
       <TouchableOpacity
