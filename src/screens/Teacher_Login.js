@@ -11,7 +11,13 @@ const LoginScreen = ({navigation}) => {
 
   // Function to handle login logic
   const handleLogin = () => {
-    // Firebase Authentication: Sign in with email and password
+    // Check if the email starts with "teacher"
+    if (!email.toLowerCase().startsWith('teacher')) {
+      Alert.alert('Error', 'Only teachers are allowed to log in.');
+      return; // Stop further execution
+    }
+  
+    // Proceed with Firebase authentication
     auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => {
@@ -49,6 +55,7 @@ const LoginScreen = ({navigation}) => {
         console.error(error);
       });
   };
+  
 
   return (
     <View style={styles.container}>
