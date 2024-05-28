@@ -16,7 +16,10 @@ const TeacherPortalScreen = ({navigation}) => {
           />
         </View>
         <View style={styles.button}>
-          <Text style={styles.buttonText}>Manage Marks</Text>
+        <Button
+            title="Manage Marks"
+            onPress={() => navigation.navigate('ManageMarksScreen')}
+          />
         </View>
       </View>
     </View>
