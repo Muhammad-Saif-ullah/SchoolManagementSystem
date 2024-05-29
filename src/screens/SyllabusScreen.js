@@ -1,103 +1,188 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Button, StyleSheet, ScrollView, Alert, TouchableOpacity, Image } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
+import { Text, View, StyleSheet, ScrollView, Alert, Image } from 'react-native';
+import { Button } from 'react-native-paper';
+import { launchImageLibrary } from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
+import colors from '../styles/colors';
+
+const getImageUrlName = (classname) => {
+  switch (classname) {
+    case 'Nursery':
+      return 'nursery_syllabus.png';
+    case 'Prep':
+      return 'prep_syllabus.png';
+    case 'Class 1':
+      return 'class_1_syllabus.png';
+    case 'Class 2':
+      return 'class_2_syllabus.png';
+    case 'Class 3':
+      return 'class_3_syllabus.png';
+    case 'Class 4':
+      return 'class_4_syllabus.png';
+    case 'Class 5':
+      return 'class_5_syllabus.png';
+    case 'Class 6':
+      return 'class_6_syllabus.png';
+    case 'Class 7':
+      return 'class_7_syllabus.png';
+    case 'Class 8':
+      return 'class_8_syllabus.png';
+    default:
+      return null;
+  }
+};
+
+const SyllabusDisplay = ({ classname, imageUrl }) => {
+  return <>
+    <Text style={styles.heading}>{classname}</Text>
+    {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} />}
+    <Button
+      mode="outlined"
+      style={{ marginTop: 10, borderColor: colors.primary }}
+      onPress={() => uploadImage(getImageUrlName(classname))}>
+      Upload
+    </Button>
+    <Button
+      mode="contained"
+      style={{ marginTop: 10, backgroundColor: colors.primary }}
+      onPress={() => {
+        Alert.alert('Delete', 'Are you sure you want to delete this image?', [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            onPress: async () => {
+              try {
+                await storage().ref(getImageUrlName(classname)).delete();
+                Alert.alert('Success', 'Image deleted successfully!');
+              } catch (error) {
+                Alert.alert('Error', 'Image deletion failed: ' + error.message);
+              }
+            },
+          },
+        ]);
+      }}>
+      Delete
+    </Button>
+    <View style={{ borderBottomColor: 'black', borderBottomWidth: 1, marginVertical: 10 }} />
+  </>
+};
+
+const uploadImage = (imageNameUrl) => {
+  launchImageLibrary({ mediaType: 'photo' }, async response => {
+    if (response.didCancel) {
+      return;
+    } else if (response.error) {
+      Alert.alert('Error', 'Image selection failed: ' + response.error);
+      return;
+    }
+
+    const { uri } = response.assets[0];
+    const storageRef = storage().ref(imageNameUrl);
+    const uploadTask = storageRef.putFile(uri);
+
+    Alert.alert('Info', 'Uploading image...');
+
+    uploadTask.on(
+      'state_changed',
+      snapshot => {
+        console.log('\rImage upload progress: ', snapshot.bytesTransferred);
+      },
+      error => {
+        Alert.alert('Error', 'Image upload failed: ' + error.message);
+      },
+      () => {
+        Alert.alert('Success', 'Image uploaded successfully!');
+      }
+    );
+  });
+};
 
 const SyllabusScreen = ({ navigation }) => {
-  const [syllabus, setSyllabus] = useState([]);
+  const [NurseryImageUrl, setNurseryImageUrl] = useState('');
+  const [PrepImageUrl, setPrepImageUrl] = useState('');
+  const [Class1ImageUrl, setClass1ImageUrl] = useState('');
+  const [Class2ImageUrl, setClass2ImageUrl] = useState('');
+  const [Class3ImageUrl, setClass3ImageUrl] = useState('');
+  const [Class4ImageUrl, setClass4ImageUrl] = useState('');
+  const [Class5ImageUrl, setClass5ImageUrl] = useState('');
+  const [Class6ImageUrl, setClass6ImageUrl] = useState('');
+  const [Class7ImageUrl, setClass7ImageUrl] = useState('');
+  const [Class8ImageUrl, setClass8ImageUrl] = useState('');
 
   useEffect(() => {
-    const fetchSyllabus = async () => {
-      try {
-        const snapshot = await firestore().collection('syllabus').orderBy('className').get();
-        const syllabusData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          className: doc.data().className,
-          image: doc.data().image,
-        }));
-        setSyllabus(syllabusData);
-      } catch (error) {
-        console.error('Error fetching syllabus:', error);
-        Alert.alert('Error', 'Error fetching syllabus!');
-      }
-    };
+    async function fetchImageUrl() {
+      const NUrl = await getImageUrl('nursery_syllabus.png');
+      setNurseryImageUrl(NUrl);
 
-    fetchSyllabus();
+      const PUrl = await getImageUrl('prep_syllabus.png');
+      setPrepImageUrl(PUrl);
+
+      const C1Url = await getImageUrl('class_1_syllabus.png');
+      setClass1ImageUrl(C1Url);
+
+      const C2Url = await getImageUrl('class_2_syllabus.png');
+      setClass2ImageUrl(C2Url);
+
+      const C3Url = await getImageUrl('class_3_syllabus.png');
+      setClass3ImageUrl(C3Url);
+
+      const C4Url = await getImageUrl('class_4_syllabus.png');
+      setClass4ImageUrl(C4Url);
+
+      const C5Url = await getImageUrl('class_5_syllabus.png');
+      setClass5ImageUrl(C5Url);
+
+      const C6Url = await getImageUrl('class_6_syllabus.png');
+      setClass6ImageUrl(C6Url);
+
+      const C7Url = await getImageUrl('class_7_syllabus.png');
+      setClass7ImageUrl(C7Url);
+
+      const C8Url = await getImageUrl('class_8_syllabus.png');
+      setClass8ImageUrl(C8Url);
+    }
+
+    fetchImageUrl();
   }, []);
 
-  const handleEdit = (className, image) => {
-    navigation.navigate('UploadSyllabusScreen', { edit: true, className, uri: image });
-  };
-
-  const handleDelete = async (className) => {
+  async function getImageUrl(imagePath) {
     try {
-      const querySnapshot = await firestore().collection('syllabus').where('className', '==', className).get();
-      if (!querySnapshot.empty) {
-        const document = querySnapshot.docs[0];
-        await firestore().collection('syllabus').doc(document.id).delete();
-        setSyllabus(syllabus.filter(item => item.className !== className));
-        Alert.alert('Success', 'Syllabus deleted successfully!');
-      } else {
-        Alert.alert('Error', 'Document not found!');
-      }
+      const url = await storage().ref(imagePath).getDownloadURL();
+      return url;
     } catch (error) {
-      console.error('Error deleting syllabus:', error);
-      Alert.alert('Error', 'Error deleting syllabus!');
+      console.log('Error getting image URL: ', error);
+      return null;
     }
-  };
+  }
 
   return (
-    <ScrollView>
-      <TouchableOpacity style={styles.uploadButton} onPress={() => navigation.navigate("UploadSyllabusScreen", { edit: false })}>
-        <Text style={{ color: "white" }}>Upload Syllabus</Text>
-      </TouchableOpacity>
-
-      {syllabus.map(item => (
-        <View key={item.id} style={styles.syllabusItem}>
-          <Text>{item.className}</Text>
-          <Image source={{ uri: item.image }} style={styles.image} />
-          <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item.className, item.image)}>
-            <Text style={{ color: "white" }}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.className)}>
-            <Text style={{ color: "white" }}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+    <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <SyllabusDisplay classname="Nursery" imageUrl={NurseryImageUrl} />
+      <SyllabusDisplay classname="Prep" imageUrl={PrepImageUrl} />
+      <SyllabusDisplay classname="Class 1" imageUrl={Class1ImageUrl} />
+      <SyllabusDisplay classname="Class 2" imageUrl={Class2ImageUrl} />
+      <SyllabusDisplay classname="Class 3" imageUrl={Class3ImageUrl} />
+      <SyllabusDisplay classname="Class 4" imageUrl={Class4ImageUrl} />
+      <SyllabusDisplay classname="Class 5" imageUrl={Class5ImageUrl} />
+      <SyllabusDisplay classname="Class 6" imageUrl={Class6ImageUrl} />
+      <SyllabusDisplay classname="Class 7" imageUrl={Class7ImageUrl} />
+      <SyllabusDisplay classname="Class 8" imageUrl={Class8ImageUrl} />
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  uploadButton: {
-    backgroundColor: 'green',
-    padding: 10,
-    alignItems: 'center',
-    margin: 10,
-  },
-  editButton: {
-    backgroundColor: 'purple',
-    padding: 10,
-    alignItems: 'center',
-    margin: 10,
-  },
-  deleteButton: {
-    backgroundColor: 'red',
-    padding: 10,
-    alignItems: 'center',
-    margin: 10,
-  },
-  syllabusItem: {
-    marginBottom: 20,
-    padding: 10,
-    borderColor: 'gray',
-    borderWidth: 1,
+  heading: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 10,
   },
   image: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'contain', // Maintain aspect ratio
-    marginVertical: 10, // Add vertical margin
-    borderRadius: 10, // Optional: add border radius for rounded corners
+    width: 400,
+    height: 400,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
 });
 
