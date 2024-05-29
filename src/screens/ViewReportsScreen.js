@@ -3,7 +3,7 @@ import {View, Button, StyleSheet} from 'react-native';
 
 const ViewReportScreen = ({route, navigation}) => {
   const handlePress = screen => {
-    navigation.navigate(screen, {email: route.params.email});
+    navigation.navigate(screen, {email: route.params?.email});
   };
 
   return (
