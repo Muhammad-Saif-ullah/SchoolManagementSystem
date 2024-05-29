@@ -80,10 +80,6 @@ const StudentRegistrationScreen = ({ navigation, route }) => {
   };
 
   const registerStudent = async () => {
-    console.log('Registering student...');
-    // show all fields
-    console.log(regNo, name, dob, student.admissiondate, fatherName, gender, caste, occupation, residence, stdEmail, password, admissionClass, remarks);
-
     if (regNo.trim() === '' || regNo < 1 || regNo > 1000) {
       Alert.alert('Error', 'Please enter a valid registration number!');
       return;
@@ -112,7 +108,6 @@ const StudentRegistrationScreen = ({ navigation, route }) => {
     try {
       if (student === undefined) {
         await auth().createUserWithEmailAndPassword(email, password);
-        console.log('New Student credentials created!');
       }
 
       await firestore().collection('Students').doc(regNo).set({
@@ -130,7 +125,6 @@ const StudentRegistrationScreen = ({ navigation, route }) => {
         Remarks: remarks,
         AdmissionClass: firestore().collection('Classes').doc(admissionClass),
       });
-      console.log('New Student Registration added!');
 
       const subjects = getClasswiseSubjects(admissionClass);
       const marksCollection = firestore().collection('Students').doc(regNo).collection('Marks');
@@ -148,12 +142,10 @@ const StudentRegistrationScreen = ({ navigation, route }) => {
         await marksCollection.doc(subject).set({});
       }
 
-      console.log('Subjects added to Marks collection!');
       Alert.alert('Registered', 'Student registered successfully!');
       navigation.goBack();
     }
     catch (error) {
-      console.error('Error adding student: ', error);
       let message = 'An error occurred. Please try again.';
       if (error.code === 'auth/email-already-in-use') {
         message = 'This email address is already in use.';
