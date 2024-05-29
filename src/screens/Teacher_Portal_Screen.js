@@ -1,17 +1,25 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {View, Text, Button, StyleSheet} from 'react-native';
+import MyComponent from '../components/MyComponent';
+import colors from '../styles/colors';
 
-const TeacherPortalScreen = () => {
+const TeacherPortalScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Teacher Portal</Text>
       <Text style={styles.welcomeText}>Welcome Mr Saifullah!</Text>
       <View style={styles.buttonsContainer}>
         <View style={styles.button}>
-          <Text style={styles.buttonText}>Classes Schedule</Text>
+          <Button
+            title="Classes Schedule"
+            onPress={() => navigation.navigate('ClassesScheduleScreen')}
+          />
         </View>
         <View style={styles.button}>
-          <Text style={styles.buttonText}>Manage Marks</Text>
+        <Button
+            title="Manage Marks"
+            onPress={() => navigation.navigate('ManageMarksScreen')}
+          />
         </View>
       </View>
     </View>
