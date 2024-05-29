@@ -7,6 +7,8 @@ const ManageMarksScreen = () => {
   const [teacherData, setTeacherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredStudents, setFilteredStudents] = useState([]);
 
   useEffect(() => {
     const fetchTeacherData = async () => {
@@ -40,37 +42,39 @@ const ManageMarksScreen = () => {
                 studentsQuerySnapshot.docs.map(async studentDoc => {
                   const student = studentDoc.data();
 
-                  // Resolve AdmissionClass reference for each student
-                  const studentAdmissionClassRef = student.AdmissionClass;
-                  const studentAdmissionClass = await studentAdmissionClassRef.get().then(doc => doc.id);
-                  console.log('Resolved Admission Class for Student:', studentAdmissionClass);
+                  // Check if AdmissionClass is a reference and resolve it
+                  if (student.AdmissionClass && student.AdmissionClass.get) {
+                    const studentAdmissionClass = await student.AdmissionClass.get().then(doc => doc.id);
+                    console.log('Resolved Admission Class for Student:', studentAdmissionClass);
 
-                  // Check if student's admission class matches any of the teacher's assigned classes
-                  if (assignedClasses.includes(studentAdmissionClass)) {
-                    console.log('Teacher class and student class matched!');
-                    const marksCollection = await firestore()
-                      .collection('Students')
-                      .doc(studentDoc.id)
-                      .collection('Marks')
-                      .get();
+                    // Check if student's admission class matches any of the teacher's assigned classes
+                    if (assignedClasses.includes(studentAdmissionClass)) {
+                      console.log('Teacher class and student class matched!');
+                      const marksCollection = await firestore()
+                        .collection('Students')
+                        .doc(studentDoc.id)
+                        .collection('Marks')
+                        .get();
 
-                    const subjectsData = await Promise.all(
-                      marksCollection.docs.map(async subjectDoc => {
-                        const subjectData = await firestore()
-                          .collection('Students')
-                          .doc(studentDoc.id)
-                          .collection('Marks')
-                          .doc(subjectDoc.id)
-                          .get();
+                      const subjectsData = await Promise.all(
+                        marksCollection.docs.map(async subjectDoc => {
+                          const subjectData = await firestore()
+                            .collection('Students')
+                            .doc(studentDoc.id)
+                            .collection('Marks')
+                            .doc(subjectDoc.id)
+                            .get();
 
-                        return { subjectName: subjectDoc.id, ...subjectData.data() };
-                      })
-                    );
+                          return { subjectName: subjectDoc.id, ...subjectData.data() };
+                        })
+                      );
 
-                    return { id: studentDoc.id, ...student, marks: subjectsData };
+                      return { id: studentDoc.id, ...student, marks: subjectsData };
+                    }
                   } else {
-                    return null; // Return null if student's admission class doesn't match any of the teacher's assigned classes
+                    console.warn('Invalid AdmissionClass reference:', student.AdmissionClass);
                   }
+                  return null; // Return null if student's admission class doesn't match any of the teacher's assigned classes
                 })
               );
 
@@ -78,6 +82,7 @@ const ManageMarksScreen = () => {
               const filteredStudentsData = studentsData.filter(student => student !== null);
 
               setStudents(filteredStudentsData);
+              setFilteredStudents(filteredStudentsData); // Initialize filtered students with all students
             }
           }
         }
@@ -129,7 +134,7 @@ const ManageMarksScreen = () => {
         });
         return updatedStudents;
       });
-  
+
       // Remove the mark from Firebase
       await firestore()
         .collection('Students')
@@ -185,6 +190,14 @@ const ManageMarksScreen = () => {
     }
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const filteredData = students.filter(student => 
+      student.Name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredStudents(filteredData);
+  };
+
   const renderStudent = ({ item }) => (
     <View style={styles.studentContainer}>
       <Text style={styles.studentName}>Student Name: {item.Name}</Text>
@@ -206,8 +219,7 @@ const ManageMarksScreen = () => {
               style={styles.input}
               value={mark.MidTerm}
               placeholder={`Mid Term ${getTotalMarks(mark.subjectName, 'MidTerm')}`}
-              onChangeText
-              ={text => updateMark(item.id, mark.subjectName, 'MidTerm', text)}
+              onChangeText={text => updateMark(item.id, mark.subjectName, 'MidTerm', text)}
             />
             <Button
               title="Remove Midterm Marks"
@@ -231,11 +243,19 @@ const ManageMarksScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search by student name"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      </View>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={students}
+          data={filteredStudents}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderStudent}
         />
@@ -249,6 +269,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#fff',
+  },
+  searchContainer: {
+    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  searchInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 8,
   },
   studentContainer: {
     marginBottom: 16,
