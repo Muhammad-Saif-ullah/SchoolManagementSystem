@@ -5,7 +5,7 @@ import colors from '../styles/colors';
 const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Image 
+      <Image
         source={require('../assets/2.jpg')} //image to e selected
         style={styles.image}/>
       <Text style={styles.title}>Welcome to School Management System</Text>
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   image: {
-    width: 400,
+    width: "114%",
     height: 410,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   button: {
-    backgroundColor:'#4169E1', //colors to be decided
+    backgroundColor: '#4169E1', //colors to be decided
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 25,
