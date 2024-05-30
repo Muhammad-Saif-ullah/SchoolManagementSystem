@@ -1,48 +1,86 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Text, StyleSheet, Alert } from 'react-native';
+import { ActivityIndicator, View, ScrollView, Text, StyleSheet, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import { Button } from 'react-native-paper';
+import colors from '../styles/colors';
 
-const ViewFeeStatusScreen = () => {
+const ViewFeeStatusScreen = ({ navigation }) => {
   const [feeStatus, setFeeStatus] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchFeeStatus = async () => {
       try {
         const snapshot = await firestore()
-          .collection('students')
+          .collection('Students')
           .get();
 
-        const students = snapshot.docs.map(doc => ({
-          id: doc.id,
-          name: doc.data().name,
-          email: doc.data().email,
-          feeStatus: doc.data().feeStatus,
-        }));
+        const studentsWithFeeStatus = snapshot.docs
+          .map(doc => ({
+            regno: doc.id,
+            name: doc.data().Name,
+            email: doc.data().Email,
+            feeStatus: doc.data().FeeStatus,
+          }))
+          .filter(student => student.feeStatus !== undefined);
 
-        setFeeStatus(students);
+        setFeeStatus(studentsWithFeeStatus);
       } catch (error) {
         console.error('Error fetching fee status:', error);
         Alert.alert('Error', 'An error occurred. Check console.');
+      }
+      finally {
+        setLoading(false);
       }
     };
 
     fetchFeeStatus();
   }, []);
 
+  const handleEdit = (student) => {
+    console.log('Student:', student);
+    navigation.navigate('AddNewFeeStatusScreen', { student });
+  };
+
+  const handleDelete = async (regno) => {
+    try {
+      await firestore()
+        .collection('Students')
+        .doc(regno)
+        .update({
+          FeeStatus: firestore.FieldValue.delete()
+        });
+
+      setFeeStatus(prevState => prevState.filter(student => student.regno !== regno));
+      Alert.alert('Success', 'Fee Status deleted successfully');
+    } catch (error) {
+      console.error('Error deleting fee status:', error);
+      Alert.alert('Error', 'An error occurred. Check console.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Fee Status found: {feeStatus.length}</Text>
+        </View>
+        {loading && <ActivityIndicator size="large" color={colors.primary} />}
         {feeStatus.map((student, index) => (
           <View key={index} style={styles.studentContainer}>
-            <Text style={styles.headerText}>Student Name: {student.name}</Text>
-            <Text style={styles.headerText}>Email: {student.email}</Text>
-            <Text>Class: {student.feeStatus.class}</Text>
-            <Text>Amount Due: {student.feeStatus.amountDue}</Text>
-            <Text>Amount Paid: {student.feeStatus.amountPaid}</Text>
-            <Text>Payable Amount: {student.feeStatus.payableAmount}</Text>
-            <Text>Payment Date: {student.feeStatus.paymentDate}</Text>
-            <Text>Late Fees: {student.feeStatus.lateFees ? 'Yes' : 'No'}</Text>
-            <Text>Remarks: {student.feeStatus.remarks}</Text>
+            <Text style={styles.boldText}>Student Name: {student.name}</Text>
+            <Text style={styles.boldText}>Email: {student.email}</Text>
+            <Text>Amount Due: {student.feeStatus.AmountDue}</Text>
+            <Text>Amount Paid: {student.feeStatus.AmountPaid}</Text>
+            <Text>Payable Amount: {student.feeStatus.PayableAmount}</Text>
+            <Text>Payment Date: {student.feeStatus.PaymentDate}</Text>
+            <Text>Late Fees: {student.feeStatus.LateFees ? 'Yes' : 'No'}</Text>
+            <Text>Remarks: {student.feeStatus.Remarks}</Text>
+            <Button mode="outlined" style={{ marginTop: 10, borderColor: colors.primary }} onPress={() => handleEdit(student)}>
+              Edit Fee Status
+            </Button>
+            <Button mode="contained" style={{ marginTop: 10, backgroundColor: colors.primary }} onPress={() => handleDelete(student.regno)}>
+              Delete Fee Status
+            </Button>
           </View>
         ))}
       </ScrollView>
@@ -55,13 +93,20 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  header: {
+    marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   studentContainer: {
     marginBottom: 20,
     paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-  headerText: {
+  boldText: {
     fontWeight: 'bold',
     marginBottom: 5,
   },

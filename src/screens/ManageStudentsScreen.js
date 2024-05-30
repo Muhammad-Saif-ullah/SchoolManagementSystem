@@ -1,12 +1,13 @@
-import React, {useState, useEffect} from 'react';
-import {View, ScrollView, Text, StyleSheet, Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ActivityIndicator, View, ScrollView, Text, StyleSheet, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {Button} from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import colors from '../styles/colors';
 
-const ManageStudentsScreen = ({navigation}) => {
+const ManageStudentsScreen = ({ navigation }) => {
   const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -36,6 +37,9 @@ const ManageStudentsScreen = ({navigation}) => {
         console.error('Error fetching students:', error);
         Alert.alert('Error', 'An error occurred. Check console.');
       }
+      finally {
+        setLoading(false);
+      }
     };
 
     fetchStudents();
@@ -44,15 +48,15 @@ const ManageStudentsScreen = ({navigation}) => {
   const handleEdit = student => {
     // Show student as json on console
     console.log('Student:', student);
-    navigation.navigate('StudentRegistrationScreen', {student});
+    navigation.navigate('StudentRegistrationScreen', { student });
   };
 
   const handleDelete = async regno => {
     Alert.alert(
       'Confirm Delete',
       'Are you sure you want to delete this student? Reg No: ' +
-        regno +
-        '. This action cannot be undone. Proceed with caution',
+      regno +
+      '. This action cannot be undone. Proceed with caution',
       [
         {
           text: 'Cancel',
@@ -107,7 +111,7 @@ const ManageStudentsScreen = ({navigation}) => {
           },
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   };
 
@@ -119,6 +123,7 @@ const ManageStudentsScreen = ({navigation}) => {
             Students found: {students.length}
           </Text>
         </View>
+        {loading && <ActivityIndicator size="large" color={colors.primary} />}
         {students.map((student, index) => (
           <View key={index} style={styles.studentContainer}>
             <Text style={styles.boldText}>Reg No: {student.regno}</Text>
@@ -139,13 +144,13 @@ const ManageStudentsScreen = ({navigation}) => {
             <Text style={styles.text}>Remarks: {student.remarks}</Text>
             <Button
               mode="outlined"
-              style={{marginTop: 10, borderColor: colors.primary}}
+              style={{ marginTop: 10, borderColor: colors.primary }}
               onPress={() => handleEdit(student)}>
               Edit Student
             </Button>
             <Button
               mode="contained"
-              style={{marginTop: 10, backgroundColor: colors.primary}}
+              style={{ marginTop: 10, backgroundColor: colors.primary }}
               onPress={() => handleDelete(student.regno)}>
               Delete Student
             </Button>

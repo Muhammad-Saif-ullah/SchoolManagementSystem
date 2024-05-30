@@ -1,38 +1,87 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import { ActivityIndicator, View, Button, StyleSheet, ScrollView, Alert } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import colors from '../styles/colors';
+
+const getClasswiseSubjects = (assignedClass) => {
+  let subjects = [];
+  switch (assignedClass) {
+    case 'Nursery':
+      subjects = ['English', 'Urdu', 'Maths', 'Nazara-e-Quran'];
+      break;
+    case 'Prep':
+      subjects = ['English', 'Urdu', 'Maths', 'Nazara-e-Quran', 'General Knowledge'];
+      break;
+    case 'Class 1':
+      subjects = ['English', 'Urdu', 'Maths', 'General Knowledge', 'Islamyat'];
+      break;
+    case 'Class 2':
+    case 'Class 3':
+      subjects = ['English', 'Urdu', 'Maths', 'General Knowledge', 'Islamyat', 'Computer Part 1', 'Computer Part 2'];
+      break;
+    case 'Class 4':
+    case 'Class 5':
+      subjects = ['English', 'Urdu', 'Maths', 'General Knowledge', 'Islamyat', 'Computer Part 1', 'Computer Part 2', 'Social Study'];
+      break;
+    case 'Class 6':
+    case 'Class 7':
+    case 'Class 8':
+      subjects = ['English', 'Urdu', 'Maths', 'General Knowledge', 'Islamyat', 'Computer Part 1', 'Computer Part 2', 'Social Study', 'Quran'];
+      break;
+  }
+  return subjects;
+};
 
 const ResultSheetScreen = () => {
   const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
+        let finalStudent = {};
+
         const studentsSnapshot = await firestore().collection('Students').get();
+
         const studentsData = await Promise.all(studentsSnapshot.docs.map(async doc => {
+
           const student = doc.data();
+
           const marksSnapshot = await firestore().collection('Students').doc(doc.id).collection('Marks').get();
 
-          const marksData = await Promise.all(marksSnapshot.docs.map(async subDoc => {
-            const subMarksSnapshot = await firestore().collection('Students').doc(doc.id).collection('Marks').doc(subDoc.id).collection('Marks').get();
-            const subMarks = subMarksSnapshot.docs.reduce((acc, markDoc) => {
-              const { FirstTerm = 0, MidTerm = 0, FinalTerm = 0 } = markDoc.data();
-              acc[markDoc.id] = { FirstTerm, MidTerm, FinalTerm };
-              return acc;
-            }, {});
-            return { [subDoc.id]: subMarks };
-          }));
+          for (const subject in getClasswiseSubjects(student.AdmissionClass._documentPath._parts[1])) {
 
-          const marks = marksData.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+            const marksData = await Promise.all(marksSnapshot.docs.map(async subDoc => {
 
-          return { ...student, marks };
+              const subMarksSnapshot = await firestore().collection('Students').doc(doc.id).collection('Marks').doc(subDoc.id).collection(subject).get();
+
+              const subMarks = subMarksSnapshot.docs.reduce((acc, markDoc) => {
+                const { FirstTerm = 0, MidTerm = 0, FinalTerm = 0 } = markDoc.data();
+                acc[markDoc.id] = { FirstTerm, MidTerm, FinalTerm };
+
+                return acc;
+              }, {});
+
+              return { [subDoc.id]: subMarks };
+            }));
+
+            const marks = marksData.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+            finalStudent = { ...student, marks };
+          }
+
+          return finalStudent;
+
         }));
 
         setStudents(studentsData);
-      } catch (error) {
+      } 
+      catch (error) {
         Alert.alert('Error', 'Failed to fetch student data: ' + error.message);
+      } 
+      finally {
+        setLoading(false);
       }
     };
 
@@ -117,6 +166,7 @@ const ResultSheetScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {loading && <ActivityIndicator size="large" color={colors.primary} />}
       <DataTable>
         <DataTable.Header>
           <DataTable.Title style={styles.addmargin}>Reg No</DataTable.Title>
