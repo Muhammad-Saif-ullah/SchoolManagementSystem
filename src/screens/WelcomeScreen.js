@@ -7,8 +7,7 @@ const WelcomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Image 
         source={require('../assets/2.jpg')} //image to e selected
-        style={styles.image}
-      />
+        style={styles.image}/>
       <Text style={styles.title}>Welcome to School Management System</Text>
       <TouchableOpacity
         style={styles.button}
@@ -28,6 +27,7 @@ const WelcomeScreen = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

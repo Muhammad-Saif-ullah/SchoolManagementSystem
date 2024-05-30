@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import colors from '../styles/colors';
 
 const ViewSyllabus = ({ route }) => {
-  const { subject, className } = route.params;
+  const { regNo } = route.params;
   const [syllabusUri, setSyllabusUri] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [className, setClassName] = useState('');
 
   useEffect(() => {
     const fetchSyllabus = async () => {
       try {
-        const subjectDoc = await firestore().collection('Syllabus').doc(subject).get();
-        if (subjectDoc.exists) {
-          setSyllabusUri(subjectDoc.data().uri);
+        const studentDoc = await firestore().collection('Students').doc(regNo).get();
+        if (studentDoc.exists) {
+          const admissionClassRef = studentDoc.data().AdmissionClass;
+          const classPathParts = admissionClassRef._documentPath._parts;
+          const classNumber = classPathParts[classPathParts.length - 1].split(' ')[1];
+          setClassName(classNumber);
+
+          const uri = await storage().ref(`class_${classNumber}_syllabus.png`).getDownloadURL();
+          setSyllabusUri(uri);
+        } else {
+          console.error('Student document does not exist for regNo:', regNo);
         }
       } catch (error) {
         console.error('Error fetching syllabus:', error);
@@ -23,17 +33,17 @@ const ViewSyllabus = ({ route }) => {
     };
 
     fetchSyllabus();
-  }, [subject]);
+  }, [regNo]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{subject} Syllabus</Text>
+      <Text style={styles.title}>Syllabus</Text>
       <Text style={styles.classText}>Class: {className}</Text>
       <View style={styles.imageContainer}>
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <Image source={{ uri: syllabusUri }} style={styles.image} resizeMode="contain" />
+            syllabusUri && <Image source={{ uri: syllabusUri }} style={styles.image} resizeMode="contain" />
         )}
       </View>
     </View>
