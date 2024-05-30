@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import colors from '../styles/colors';
 
 const ViewTimeTable = ({ route }) => {
@@ -14,20 +15,18 @@ const ViewTimeTable = ({ route }) => {
       try {
         const studentDoc = await firestore().collection('Students').doc(regNo).get();
         if (studentDoc.exists) {
-          const admissionClassRef = studentDoc.data().AdmissionClass;
-          if (admissionClassRef && admissionClassRef.path) {
-            const classNumber = admissionClassRef.path.split('/').pop();
+          const studentData = studentDoc.data();
+          const admissionClassRef = studentData.AdmissionClass;
+          
+          if (admissionClassRef) {
+            const classPathParts = admissionClassRef._documentPath._parts;
+            const classNumber = classPathParts[classPathParts.length - 1].split(' ')[1];
             setClassName(classNumber);
-
-            const timetableDoc = await firestore().collection('TimeTable').doc(classNumber).get();
-            if (timetableDoc.exists) {
-              const uri = timetableDoc.data().uri;
-              setTimetableUri(uri);
-            } else {
-              console.error('TimeTable document does not exist for class:', classNumber);
-            }
+            
+            const uri = await storage().ref(`class_${classNumber}_timetable.png`).getDownloadURL();
+            setTimetableUri(uri);
           } else {
-            console.error('AdmissionClass reference is invalid:', admissionClassRef);
+            console.error('AdmissionClass is undefined for student:', regNo);
           }
         } else {
           console.error('Student document does not exist for regNo:', regNo);
@@ -50,7 +49,7 @@ const ViewTimeTable = ({ route }) => {
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <Image source={{ uri: timetableUri }} style={styles.image} resizeMode="contain" />
+          timetableUri && <Image source={{ uri: timetableUri }} style={styles.image} resizeMode="contain" />
         )}
       </View>
     </View>

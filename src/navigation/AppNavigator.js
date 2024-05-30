@@ -18,7 +18,7 @@ import UploadSyllabusScreen from '../screens/UploadSyllabusScreen';
 import TimetablesScreen from '../screens/TimetablesScreen';
 import UploadTimetableScreen from '../screens/UploadTimetableScreen';
 import ViewMarks from '../screens/ViewMarks';
-// import ViewPreviousRecords from '../screens/ViewPreviousRecords';
+import ViewPreviousRecords from '../screens/ViewPreviousRecords';
 import ViewFeeStatus from '../screens/ViewFeeStatus';
 import ViewTimetable from '../screens/ViewTimetable';
 import ViewSyllabus from '../screens/ViewSyllabus';
@@ -72,7 +72,7 @@ const AppNavigator = () => {
         <Stack.Screen name="StudentRegistrationForm" component={StudentRegistrationForm} />
         <Stack.Screen name="ClassesScheduleScreen" component={ClassesScheduleScreen} />
         <Stack.Screen name="ViewMarks" component={ViewMarks} />
-        {/* <Stack.Screen name="ViewPreviousRecords" component={ViewPreviousRecords} /> */}
+        <Stack.Screen name="ViewPreviousRecords" component={ViewPreviousRecords} />
         <Stack.Screen name="ViewFeeStatus" component={ViewFeeStatus} />
         <Stack.Screen name="ViewTimetable" component={ViewTimetable} />
         <Stack.Screen name="ViewSyllabus" component={ViewSyllabus} />

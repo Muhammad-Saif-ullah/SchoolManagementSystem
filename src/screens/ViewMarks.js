@@ -1,89 +1,82 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import colors from '../styles/colors';
 
 const ViewMarks = ({ route }) => {
   const { regNo } = route.params;
-  const [marks, setMarks] = useState([]);
+  const [marksData, setMarksData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMarks = async () => {
+    const fetchMarksAndTotals = async () => {
       try {
-        const marksSnapshot = await firestore()
-          .collection(`Students/${regNo}/Marks`)
-          .get();
+        const studentMarksRef = firestore().collection('Students').doc(regNo).collection('Marks');
+        const subjectsRef = firestore().collection('Subjects');
+        const studentMarksSnapshot = await studentMarksRef.get();
+        const subjectsSnapshot = await subjectsRef.get();
 
-        const marksData = marksSnapshot.docs.map(doc => {
-          const { FirstTerm, MidTerm, FinalTerm } = doc.data();
+        const subjectsData = subjectsSnapshot.docs.reduce((acc, doc) => {
+          acc[doc.id] = doc.data();
+          return acc;
+        }, {});
+
+        const marksData = studentMarksSnapshot.docs.map(doc => {
+          const { FinalTerm, FirstTerm, MidTerm } = doc.data();
+          const subjectData = subjectsData[doc.id];
+          
+          if (!subjectData) {
+            return {
+              subject: doc.id,
+              FirstTerm: { obtained: FirstTerm, total: 0 },
+              MidTerm: { obtained: MidTerm, total: 0 },
+              FinalTerm: { obtained: FinalTerm, total: 0 }
+            };
+          }
+
+          const marksDistribution = subjectData.marksDistribution;
+
           return {
-            id: doc.id,
             subject: doc.id,
-            FirstTerm,
-            MidTerm,
-            FinalTerm,
+            FirstTerm: { obtained: FirstTerm, total: marksDistribution[0] },
+            MidTerm: { obtained: MidTerm, total: marksDistribution[1] },
+            FinalTerm: { obtained: FinalTerm, total: marksDistribution[2] }
           };
         });
 
-        setMarks(marksData);
+        setMarksData(marksData);
       } catch (error) {
-        console.error('Error fetching marks:', error);
+        console.error('Error fetching marks and totals:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchMarks();
+    fetchMarksAndTotals();
   }, [regNo]);
 
-  const getTotalMarks = async (subjectName) => {
-    try {
-      const subjectDoc = await firestore().collection('Subjects').doc(subjectName).get();
-      const marksDistribution = subjectDoc.data().marksDistribution;
-      return marksDistribution;
-    } catch (error) {
-      console.error('Error fetching total marks:', error);
-      return {
-        FirstTermTotal: 0,
-        MidTermTotal: 0,
-        FinalTermTotal: 0,
-      };
-    }
-  };
-
-  const renderItem = ({ item }) => {
-    const { subject, FirstTerm, MidTerm, FinalTerm } = item;
-    const [firstTermTotal, setFirstTermTotal] = useState(0);
-    const [midTermTotal, setMidTermTotal] = useState(0);
-    const [finalTermTotal, setFinalTermTotal] = useState(0);
-
-    useEffect(() => {
-      const fetchTotalMarks = async () => {
-        const totalMarks = await getTotalMarks(subject);
-        setFirstTermTotal(totalMarks.FirstTermTotal);
-        setMidTermTotal(totalMarks.MidTermTotal);
-        setFinalTermTotal(totalMarks.FinalTermTotal);
-      };
-
-      fetchTotalMarks();
-    }, [subject]);
-
-    return (
-      <View style={styles.item}>
-        <Text style={styles.subjectText}>{subject}</Text>
-        <View style={styles.marksContainer}>
-          <Text>{`${FirstTerm} / ${firstTermTotal}`}</Text>
-          <Text>{`${MidTerm} / ${midTermTotal}`}</Text>
-          <Text>{`${FinalTerm} / ${finalTermTotal}`}</Text>
-        </View>
-      </View>
-    );
-  };
+  const renderItem = ({ item }) => (
+    <View style={styles.marksBox}>
+      <Text style={styles.subject}>{item.subject}</Text>
+      <Text style={styles.marks}>First Term: {item.FirstTerm.obtained}/{item.FirstTerm.total}</Text>
+      <Text style={styles.marks}>Mid Term: {item.MidTerm.obtained}/{item.MidTerm.total}</Text>
+      <Text style={styles.marks}>Final Term: {item.FinalTerm.obtained}/{item.FinalTerm.total}</Text>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={marks}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+      <Text style={styles.title}>Marks</Text>
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.primary} />
+      ) : (
+        <FlatList
+          data={marksData}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => `${item.subject}-${index}`}
+          contentContainerStyle={styles.list}
+        />
+      )}
     </View>
   );
 };
@@ -91,21 +84,39 @@ const ViewMarks = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#f9f9f9',
   },
-  item: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.primary,
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  subjectText: {
+  list: {
+    paddingBottom: 20,
+  },
+  marksBox: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  subject: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#555',
   },
-  marksContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  marks: {
+    fontSize: 16,
+    color: '#555',
   },
 });
 

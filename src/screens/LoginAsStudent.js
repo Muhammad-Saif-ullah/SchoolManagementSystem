@@ -1,11 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import colors from '../styles/colors';
 
 const LoginAsStudent = ({ navigation }) => {
   const [regNo, setRegNo] = useState('');
   const [password, setPassword] = useState('');
+  const [studentName, setStudentName] = useState('');
+
+  useEffect(() => {
+    const fetchStudentName = async () => {
+      try {
+        const studentDoc = await firestore().collection('Students').doc(regNo).get();
+        if (studentDoc.exists) {
+          const name = studentDoc.data().Name;
+          setStudentName(name);
+        }
+      } catch (error) {
+        console.error('Error fetching student name:', error);
+      }
+    };fetchStudentName();}, [regNo]);
 
   const handleLogin = () => {
     if (regNo.trim() === '' || password.trim() === '') {
@@ -17,7 +32,7 @@ const LoginAsStudent = ({ navigation }) => {
       .signInWithEmailAndPassword(`std${regNo}@school.com`, password)
       .then(() => {
         console.log('Student Login successful!');
-        navigation.navigate('StudentPortal', {regNo});
+        navigation.navigate('StudentPortal', {name: studentName,regNo});
       })
       .catch(error => {
         let message = 'An error occurred. Please try again.';
@@ -62,6 +77,7 @@ const LoginAsStudent = ({ navigation }) => {
       />
       <TouchableOpacity
         style={styles.button}
+        // onPress={() => navigation.navigate('StudentPortal',{regNo})}>
         onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
