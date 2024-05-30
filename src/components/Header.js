@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import {
+  TouchableOpacity,
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   StatusBar,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import colors from '../styles/colors';
 
 const Header = ({ title }) => {
@@ -21,13 +20,15 @@ const Header = ({ title }) => {
   return (
     <View style={styles.headerContainer}>
       {canGoBack && (
-        <Icon
-          name="leftcircleo"
-          size={25}
-          color={colors.secondary}
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-        />
+        // <Icon
+        //   name="leftcircleo"
+        //   size={25}
+        //   color={colors.secondary}
+        //   onPress={() => navigation.goBack()}
+        //   style={styles.backButton}
+        // />
+        <Text onPress={() => navigation.goBack()} style={styles.backButton}>◀️</Text>
+
       )}
       <Text style={styles.headerText}>{title}</Text>
     </View>
@@ -45,6 +46,9 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 18,
+    top: 7,
+    color: colors.secondary,
+    fontSize: 23,
   },
   headerText: {
     color: colors.secondary,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, ScrollView, Alert, Image } from 'react-native';
+import { ActivityIndicator, Text, View, StyleSheet, ScrollView, Alert, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 import { launchImageLibrary } from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
@@ -108,6 +108,7 @@ const SyllabusScreen = ({ navigation }) => {
   const [Class6ImageUrl, setClass6ImageUrl] = useState('');
   const [Class7ImageUrl, setClass7ImageUrl] = useState('');
   const [Class8ImageUrl, setClass8ImageUrl] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchImageUrl() {
@@ -141,6 +142,7 @@ const SyllabusScreen = ({ navigation }) => {
       const C8Url = await getImageUrl('class_8_syllabus.png');
       setClass8ImageUrl(C8Url);
     }
+    setLoading(false);
 
     fetchImageUrl();
   }, []);
@@ -157,17 +159,18 @@ const SyllabusScreen = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 20 }}>
-      <SyllabusDisplay classname="Nursery" imageUrl={NurseryImageUrl} />
-      <SyllabusDisplay classname="Prep" imageUrl={PrepImageUrl} />
-      <SyllabusDisplay classname="Class 1" imageUrl={Class1ImageUrl} />
-      <SyllabusDisplay classname="Class 2" imageUrl={Class2ImageUrl} />
-      <SyllabusDisplay classname="Class 3" imageUrl={Class3ImageUrl} />
-      <SyllabusDisplay classname="Class 4" imageUrl={Class4ImageUrl} />
-      <SyllabusDisplay classname="Class 5" imageUrl={Class5ImageUrl} />
-      <SyllabusDisplay classname="Class 6" imageUrl={Class6ImageUrl} />
-      <SyllabusDisplay classname="Class 7" imageUrl={Class7ImageUrl} />
-      <SyllabusDisplay classname="Class 8" imageUrl={Class8ImageUrl} />
-    </ScrollView>
+  { loading && <ActivityIndicator size="large" color={colors.primary} />}
+  <SyllabusDisplay classname="Nursery" imageUrl={NurseryImageUrl} />
+  <SyllabusDisplay classname="Prep" imageUrl={PrepImageUrl} />
+  <SyllabusDisplay classname="Class 1" imageUrl={Class1ImageUrl} />
+  <SyllabusDisplay classname="Class 2" imageUrl={Class2ImageUrl} />
+  <SyllabusDisplay classname="Class 3" imageUrl={Class3ImageUrl} />
+  <SyllabusDisplay classname="Class 4" imageUrl={Class4ImageUrl} />
+  <SyllabusDisplay classname="Class 5" imageUrl={Class5ImageUrl} />
+  <SyllabusDisplay classname="Class 6" imageUrl={Class6ImageUrl} />
+  <SyllabusDisplay classname="Class 7" imageUrl={Class7ImageUrl} />
+  <SyllabusDisplay classname="Class 8" imageUrl={Class8ImageUrl} />
+</ScrollView>
   );
 };
 

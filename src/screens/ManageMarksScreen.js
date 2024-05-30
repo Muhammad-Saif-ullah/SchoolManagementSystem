@@ -192,7 +192,7 @@ const ManageMarksScreen = () => {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const filteredData = students.filter(student => 
+    const filteredData = students.filter(student =>
       student.Name.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredStudents(filteredData);

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, StyleSheet, ScrollView, Alert } from 'react-native';
+import { ActivityIndicator, View, Button, StyleSheet, ScrollView, Alert } from 'react-native';
 import { DataTable } from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import colors from '../styles/colors';
 
 const ViewStudentAgeRecordScreen = () => {
   const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -37,7 +39,11 @@ const ViewStudentAgeRecordScreen = () => {
       } catch (error) {
         Alert.alert('Error', 'Failed to fetch student data: ' + error.message);
       }
+      finally {
+        setLoading(false);
+      }
     };
+
 
     fetchStudents();
   }, []);
@@ -100,6 +106,7 @@ const ViewStudentAgeRecordScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {loading && <ActivityIndicator size="large" color={colors.primary} />}
       <DataTable>
         <DataTable.Header>
           <DataTable.Title style={styles.addmargin}>Reg No</DataTable.Title>
