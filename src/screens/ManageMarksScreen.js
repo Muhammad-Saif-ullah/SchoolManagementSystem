@@ -7,8 +7,6 @@ const ManageMarksScreen = () => {
   const [teacherData, setTeacherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredStudents, setFilteredStudents] = useState([]);
 
   useEffect(() => {
     const fetchTeacherData = async () => {
@@ -24,10 +22,10 @@ const ManageMarksScreen = () => {
             console.log('Teacher Data:', teacher);
 
             // Resolve AssignedClasses references for teacher
-            const assignedClassesRefs = teacher.AssignedClasses;
-            const assignedClasses = await Promise.all(
-              assignedClassesRefs.map(ref => ref.get().then(doc => doc.id))
-            );
+            const assignedClassesRef = teacher.AssignedClass;
+            const assignedClasses = await 
+              assignedClassesRef.get().then(doc => doc.id)
+            
             console.log('Resolved Assigned Classes for Teacher:', assignedClasses);
 
             if (assignedClasses.length > 0) {
@@ -42,39 +40,37 @@ const ManageMarksScreen = () => {
                 studentsQuerySnapshot.docs.map(async studentDoc => {
                   const student = studentDoc.data();
 
-                  // Check if AdmissionClass is a reference and resolve it
-                  if (student.AdmissionClass && student.AdmissionClass.get) {
-                    const studentAdmissionClass = await student.AdmissionClass.get().then(doc => doc.id);
-                    console.log('Resolved Admission Class for Student:', studentAdmissionClass);
+                  // Resolve AdmissionClass reference for each student
+                  const studentAdmissionClassRef = student.AdmissionClass;
+                  const studentAdmissionClass = await studentAdmissionClassRef.get().then(doc => doc.id);
+                  console.log('Resolved Admission Class for Student:', studentAdmissionClass);
 
-                    // Check if student's admission class matches any of the teacher's assigned classes
-                    if (assignedClasses.includes(studentAdmissionClass)) {
-                      console.log('Teacher class and student class matched!');
-                      const marksCollection = await firestore()
-                        .collection('Students')
-                        .doc(studentDoc.id)
-                        .collection('Marks')
-                        .get();
+                  // Check if student's admission class matches any of the teacher's assigned classes
+                  if (assignedClasses.includes(studentAdmissionClass)) {
+                    console.log('Teacher class and student class matched!');
+                    const marksCollection = await firestore()
+                      .collection('Students')
+                      .doc(studentDoc.id)
+                      .collection('Marks')
+                      .get();
 
-                      const subjectsData = await Promise.all(
-                        marksCollection.docs.map(async subjectDoc => {
-                          const subjectData = await firestore()
-                            .collection('Students')
-                            .doc(studentDoc.id)
-                            .collection('Marks')
-                            .doc(subjectDoc.id)
-                            .get();
+                    const subjectsData = await Promise.all(
+                      marksCollection.docs.map(async subjectDoc => {
+                        const subjectData = await firestore()
+                          .collection('Students')
+                          .doc(studentDoc.id)
+                          .collection('Marks')
+                          .doc(subjectDoc.id)
+                          .get();
 
-                          return { subjectName: subjectDoc.id, ...subjectData.data() };
-                        })
-                      );
+                        return { subjectName: subjectDoc.id, ...subjectData.data() };
+                      })
+                    );
 
-                      return { id: studentDoc.id, ...student, marks: subjectsData };
-                    }
+                    return { id: studentDoc.id, ...student, marks: subjectsData };
                   } else {
-                    console.warn('Invalid AdmissionClass reference:', student.AdmissionClass);
+                    return null; // Return null if student's admission class doesn't match any of the teacher's assigned classes
                   }
-                  return null; // Return null if student's admission class doesn't match any of the teacher's assigned classes
                 })
               );
 
@@ -82,7 +78,6 @@ const ManageMarksScreen = () => {
               const filteredStudentsData = studentsData.filter(student => student !== null);
 
               setStudents(filteredStudentsData);
-              setFilteredStudents(filteredStudentsData); // Initialize filtered students with all students
             }
           }
         }
@@ -98,6 +93,7 @@ const ManageMarksScreen = () => {
 
   const updateMark = async (studentId, subjectName, markType, newValue) => {
     try {
+      // Update mark in Firebase
       await firestore()
         .collection('Students')
         .doc(studentId)
@@ -106,11 +102,34 @@ const ManageMarksScreen = () => {
         .update({
           [markType]: newValue
         });
+      
+      // Update local state to reflect the change
+      setStudents(prevStudents => {
+        return prevStudents.map(student => {
+          if (student.id === studentId) {
+            return {
+              ...student,
+              marks: student.marks.map(mark => {
+                if (mark.subjectName === subjectName) {
+                  return {
+                    ...mark,
+                    [markType]: newValue
+                  };
+                }
+                return mark;
+              })
+            };
+          }
+          return student;
+        });
+      });
+  
       console.log(`Successfully updated ${markType} for ${subjectName}`);
     } catch (error) {
       console.error("Error updating mark: ", error);
     }
   };
+  
 
   const removeMark = async (studentId, subjectName, markType) => {
     try {
@@ -134,7 +153,7 @@ const ManageMarksScreen = () => {
         });
         return updatedStudents;
       });
-
+  
       // Remove the mark from Firebase
       await firestore()
         .collection('Students')
@@ -190,14 +209,6 @@ const ManageMarksScreen = () => {
     }
   };
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    const filteredData = students.filter(student => 
-      student.Name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredStudents(filteredData);
-  };
-
   const renderStudent = ({ item }) => (
     <View style={styles.studentContainer}>
       <Text style={styles.studentName}>Student Name: {item.Name}</Text>
@@ -211,30 +222,31 @@ const ManageMarksScreen = () => {
               placeholder={`First Term ${getTotalMarks(mark.subjectName, 'FirstTerm')}`}
               onChangeText={text => updateMark(item.id, mark.subjectName, 'FirstTerm', text)}
             />
-            <Button
+            {/* <Button
               title="Remove 1st Term Marks"
               onPress={() => removeMark(item.id, mark.subjectName, 'FirstTerm')}
-            />
+            /> */}
             <TextInput
               style={styles.input}
               value={mark.MidTerm}
               placeholder={`Mid Term ${getTotalMarks(mark.subjectName, 'MidTerm')}`}
-              onChangeText={text => updateMark(item.id, mark.subjectName, 'MidTerm', text)}
+              onChangeText
+              ={text => updateMark(item.id, mark.subjectName, 'MidTerm', text)}
             />
-            <Button
+            {/* <Button
               title="Remove Midterm Marks"
               onPress={() => removeMark(item.id, mark.subjectName, 'MidTerm')}
-            />
+            /> */}
             <TextInput
               style={styles.input}
               value={mark.FinalTerm}
               placeholder={`Final Term ${getTotalMarks(mark.subjectName, 'FinalTerm')}`}
               onChangeText={text => updateMark(item.id, mark.subjectName, 'FinalTerm', text)}
             />
-            <Button
+            {/* <Button
               title="Remove Final Term Marks"
               onPress={() => removeMark(item.id, mark.subjectName, 'FinalTerm')}
-            />
+            /> */}
           </View>
         </View>
       ))}
@@ -243,19 +255,11 @@ const ManageMarksScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search by student name"
-          value={searchQuery}
-          onChangeText={handleSearch}
-        />
-      </View>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={filteredStudents}
+          data={students}
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderStudent}
         />
@@ -269,19 +273,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: '#fff',
-  },
-  searchContainer: {
-    marginBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-    padding: 8,
   },
   studentContainer: {
     marginBottom: 16,
