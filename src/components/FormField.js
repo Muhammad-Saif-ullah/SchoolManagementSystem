@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, StyleSheet, TextInput } from 'react-native';
 import colors from '../styles/colors';
 
-const FormField = ({ label, placeholder, hook, value, keyboard }) => (
+const FormField = ({ label, placeholder, hook, value, keyboard, secureTextEntry }) => (
   <View style={styles.inputGroup}>
     <Text style={styles.label}>{label}</Text>
     <TextInput
@@ -11,6 +11,7 @@ const FormField = ({ label, placeholder, hook, value, keyboard }) => (
       onChangeText={hook}
       keyboardType={keyboard}
       value={value}
+      secureTextEntry={secureTextEntry}
     />
   </View>
 );

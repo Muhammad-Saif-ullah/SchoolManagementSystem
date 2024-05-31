@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Button,
   Text,
@@ -9,11 +10,13 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { SelectList } from 'react-native-dropdown-select-list';
+import colors from '../styles/colors';
 
 const AssignClassesScreen = ({ navigation }) => {
   const [teachers, setTeachers] = useState([]);
   const [availableClasses, setAvailableClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const allClasses = [
     { key: 'Nursery', value: 'Nursery' },
@@ -51,12 +54,17 @@ const AssignClassesScreen = ({ navigation }) => {
         );
         setTeachers(teachersData);
         updateAvailableClasses(teachersData);
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Error fetching teachers data:', error);
         Alert.alert('Error', 'An error occurred. Check console.');
       }
+      finally {
+        setLoading(false);
+      }
     };
 
+    setLoading(true);
     fetchTeachersData();
   }, []);
 
@@ -112,6 +120,7 @@ const AssignClassesScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Assign Classes</Text>
+      {loading && <ActivityIndicator size="large" color={colors.primary} />}
       <ScrollView>
         {teachers.map((teacher, index) => (
           <View key={index} style={styles.teacherContainer}>

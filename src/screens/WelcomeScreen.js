@@ -6,7 +6,7 @@ const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/2.jpg')} //image to e selected
+        source={require('../assets/School-Management-System.jpg')}
         style={styles.image} />
       <Text style={styles.title}>Welcome to School Management System</Text>
       <TouchableOpacity
@@ -32,14 +32,13 @@ const WelcomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#D4D4D4',
+    backgroundColor: '#D4D4FF',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 0,
   },
   image: {
-    width: "114%",
-    height: 410,
+    width: "100%",
+    height: 310,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
     marginBottom: 20,
@@ -49,10 +48,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.primary,
     textAlign: 'center',
-    marginBottom: 40,
+    marginBottom: 30,
   },
   button: {
-    backgroundColor: '#4169E1', //colors to be decided
+    backgroundColor: colors.primary,
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 25,

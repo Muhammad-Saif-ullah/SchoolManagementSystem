@@ -50,15 +50,19 @@ const ViewStudentAgeRecordScreen = () => {
 
   const createPDF = async () => {
     try {
+      var i = 0;
       const studentRows = students.map(student => (
         `<tr>
+          <td>${++i}</td>
           <td>${student.RegNo}</td>
           <td>${student.Name}</td>
           <td>${student.FatherName}</td>
+          <td>${student.Gender}</td>
           <td>${student.DOB}</td>
           <td>${student.age}</td>
         </tr>`
       )).join('');
+
 
       const htmlContent = `
         <html>
@@ -72,16 +76,18 @@ const ViewStudentAgeRecordScreen = () => {
           <body>
             <table>
               <tr>
+                <th>Sr No</th>
                 <th>Reg No</th>
                 <th>Student Name</th>
                 <th>Father Name</th>
+                <th>Gender</th>
                 <th>Date of Birth</th>
                 <th>Age</th>
               </tr>
               ${studentRows}
             </table>
             <hr>
-            <p>Total Students: ${students.length}</p>
+            <p>Total Students: ${students.filter(student => student !== null).length}</p>
             <p>Total Boys: ${students.filter(student => student.Gender === 'Male').length}</p>
             <p>Total Girls: ${students.filter(student => student.Gender === 'Female').length}</p>
             <hr>
@@ -126,6 +132,7 @@ const ViewStudentAgeRecordScreen = () => {
       <Button
         title="Download PDF"
         onPress={createPDF}
+        disabled={students.length === 0 || loading}
       />
     </ScrollView>
   );

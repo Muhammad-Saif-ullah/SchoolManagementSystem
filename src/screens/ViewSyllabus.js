@@ -1,8 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import colors from '../styles/colors';
+
+const getClassname = (classNumber) => {
+  switch (classNumber) {
+    case 'Nursery':
+      return 'nursery_syllabus.png';
+    case 'Prep':
+      return 'prep_syllabus.png';
+    case 'Class 1':
+      return 'class_1_syllabus.png';
+    case 'Class 2':
+      return 'class_2_syllabus.png';
+    case 'Class 3':
+      return 'class_3_syllabus.png';
+    case 'Class 4':
+      return 'class_4_syllabus.png';
+    case 'Class 5':
+      return 'class_5_syllabus.png';
+    case 'Class 6':
+      return 'class_6_syllabus.png';
+    case 'Class 7':
+      return 'class_7_syllabus.png';
+    case 'Class 8':
+      return 'class_8_syllabus.png';
+    default:
+      return null;
+  }
+};
 
 const ViewSyllabus = ({ route }) => {
   const { regNo } = route.params;
@@ -17,16 +44,16 @@ const ViewSyllabus = ({ route }) => {
         if (studentDoc.exists) {
           const admissionClassRef = studentDoc.data().AdmissionClass;
           const classPathParts = admissionClassRef._documentPath._parts;
-          const classNumber = classPathParts[classPathParts.length - 1].split(' ')[1];
-          setClassName(classNumber);
+          const classRefName = getClassname(classPathParts[classPathParts.length - 1]);
 
-          const uri = await storage().ref(`class_${classNumber}_syllabus.png`).getDownloadURL();
+          const uri = await storage().ref(classRefName).getDownloadURL();
           setSyllabusUri(uri);
         } else {
           console.error('Student document does not exist for regNo:', regNo);
         }
       } catch (error) {
         console.error('Error fetching syllabus:', error);
+        Alert.alert('Error', 'Failed to fetch syllabus. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -43,7 +70,7 @@ const ViewSyllabus = ({ route }) => {
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-            syllabusUri && <Image source={{ uri: syllabusUri }} style={styles.image} resizeMode="contain" />
+          syllabusUri && <Image source={{ uri: syllabusUri }} style={styles.image} resizeMode="contain" />
         )}
       </View>
     </View>
