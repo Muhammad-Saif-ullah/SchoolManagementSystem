@@ -42,7 +42,7 @@ const AdminPortalScreen = ({ route, navigation }) => {
   const initDB = () => {
     Alert.alert(
       'Confirm',
-      'Are you sure you want to initialize the database? This option should be used only the first time you are setting up the app.',
+      'Are you sure you want to initialize the database? This option should be used only if you\'ve set up a new firestore database. This will create classes, subjects and empty collections for students and teachers in firestore database.',
       [
         {
           text: 'Cancel',

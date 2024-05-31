@@ -46,6 +46,7 @@ const ViewTimeTable = ({ route }) => {
           const classPathParts = admissionClassRef._documentPath._parts;
           const classRefName = getClassname(classPathParts[classPathParts.length - 1]);
 
+          setClassName(classRefName);
           const uri = await storage().ref(classRefName).getDownloadURL();
           setTimetableUri(uri);
         } else {
@@ -65,7 +66,7 @@ const ViewTimeTable = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>TimeTable</Text>
-      <Text style={styles.classText}>Class: {className}</Text>
+      <Text style={styles.classText}>{className}</Text>
       <View style={styles.imageContainer}>
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} />
