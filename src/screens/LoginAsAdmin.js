@@ -47,7 +47,7 @@ const LoginAsAdmin = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Admin Login Screen</Text>
       <FormField label="Enter email" hook={setEmail} value={email} />
-      <FormField label="Enter password" hook={setPassword} value={password} />
+      <FormField label="Enter password" hook={setPassword} value={password} secureTextEntry />
       <Button
         title="Log In"
         onPress={handleLogin}

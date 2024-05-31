@@ -1,9 +1,7 @@
 import React from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
-import MyComponent from '../components/MyComponent';
-import colors from '../styles/colors';
+import { View, Text, Button, StyleSheet } from 'react-native';
 
-const TeacherPortalScreen = ({navigation}) => {
+const TeacherPortalScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Teacher Portal</Text>
@@ -11,12 +9,6 @@ const TeacherPortalScreen = ({navigation}) => {
       <View style={styles.buttonsContainer}>
         <View style={styles.button}>
           <Button
-            title="Classes Schedule"
-            onPress={() => navigation.navigate('ClassesScheduleScreen')}
-          />
-        </View>
-        <View style={styles.button}>
-        <Button
             title="Manage Marks"
             onPress={() => navigation.navigate('ManageMarksScreen')}
           />

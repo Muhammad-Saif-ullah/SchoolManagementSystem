@@ -19,16 +19,8 @@ const AdminPortalScreen = ({ route, navigation }) => {
         {
           text: 'OK',
           onPress: () => {
-            auth()
-              .signOut()
-              .then(() => {
-                console.log('User Signed Out!');
-                navigation.popToTop();
-              })
-              .catch(error => {
-                console.error(error);
-                Alert.alert('Error', 'An error occurred. Check console.');
-              });
+            navigation.pop(1);
+            Alert.alert('Logout', 'You have been logged out successfully');
           },
         },
       ],

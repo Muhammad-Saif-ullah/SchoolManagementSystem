@@ -29,7 +29,6 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginAsStudent from '../screens/LoginAsStudent';
 import StudentPortal from '../screens/StudentPortal';
 import Teacher_Login from '../screens/Teacher_Login';
-import StudentRegistrationForm from '../screens/StudentRegistrationForm.js';
 import Teacher_Portal_Screen from '../screens/Teacher_Portal_Screen.js';
 import LoginAsAdmin from '../screens/LoginAsAdmin.js';
 import ManageStudentsScreen from '../screens/ManageStudentsScreen.js';
@@ -71,7 +70,6 @@ const AppNavigator = () => {
         <Stack.Screen name="TeacherPortalScreen" component={Teacher_Portal_Screen} />
         <Stack.Screen name="LoginAsStudent" component={LoginAsStudent} />
         <Stack.Screen name="StudentPortal" component={StudentPortal} />
-        <Stack.Screen name="StudentRegistrationForm" component={StudentRegistrationForm} />
         <Stack.Screen name="ClassesScheduleScreen" component={ClassesScheduleScreen} />
         <Stack.Screen name="ViewMarks" component={ViewMarks} />
         <Stack.Screen name="ViewPreviousRecords" component={ViewPreviousRecords} />

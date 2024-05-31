@@ -96,7 +96,7 @@ const StudentRegistrationScreen = ({ navigation, route }) => {
       return;
     }
 
-    if (name.trim() === '' || fatherName.trim() === '' || caste.trim() === '' || occupation.trim() === '' || residence.trim() === '' || stdEmail.trim() === '' || admissionClass.trim() === '') {
+    if (name.trim() === '' || fatherName.trim() === '' || caste.trim() === '' || occupation.trim() === '' || residence.trim() === '' || gender.trim() === '' || stdEmail.trim() === '' || admissionClass.trim() === '') {
       Alert.alert('Error', 'Please fill all the fields!');
       return;
     }
@@ -129,7 +129,6 @@ const StudentRegistrationScreen = ({ navigation, route }) => {
       const subjects = getClasswiseSubjects(admissionClass);
       const marksCollection = firestore().collection('Students').doc(regNo).collection('Marks');
 
-      // Clear the marks collection if student is being updated
       if (student !== undefined) {
         await firestore().collection('Students').doc(regNo).collection('Marks').get().then((snapshot) => {
           snapshot.forEach((doc) => {
