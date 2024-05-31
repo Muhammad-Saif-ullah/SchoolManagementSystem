@@ -5,8 +5,8 @@ import auth from '@react-native-firebase/auth';
 import colors from '../styles/colors';
 
 const LoginAsAdmin = ({ navigation }) => {
-  const [email, setEmail] = useState('saif@gmail.com');
-  const [password, setPassword] = useState('123test');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = () => {
     auth()
