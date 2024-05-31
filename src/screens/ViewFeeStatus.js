@@ -35,6 +35,7 @@ const ViewFeeStatus = ({ route }) => {
       {loading ? (
         <Text style={styles.loadingText}>Loading...</Text>
       ) : (
+        feeStatus ? (
           <View style={styles.statusContainer}>
             <Text style={styles.label}>Amount Due:</Text>
             <Text style={styles.value}>{feeStatus.AmountDue}</Text>
@@ -49,14 +50,16 @@ const ViewFeeStatus = ({ route }) => {
             <Text style={styles.label}>Remarks:</Text>
             <Text style={styles.value}>{feeStatus.Remarks}</Text>
           </View>
-
+        ) : (
+          <Text style={styles.loadingText}>No fee status found for this student</Text>
+        )
       )}
     </View>
   );
 };
 
-  {/* feeStatus && ( */}
-  {/* ) */}
+{/* feeStatus && ( */ }
+{/* ) */ }
 
 
 const styles = StyleSheet.create({
