@@ -32,10 +32,12 @@ const getImageUrlName = (classname) => {
   }
 };
 
-const SyllabusDisplay = ({ classname, imageUrl }) => {
+const SyllabusDisplay = ({ classname, imageUrl, navigation }) => {
   return <>
     <Text style={styles.heading}>{classname}</Text>
-    {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} />}
+    {imageUrl ? <Image source={{ uri: imageUrl }} style={styles.image} />
+      : <Text style={{ textAlign: 'center', marginTop: 10 }}>No image uploaded</Text>
+    }
     <Button
       mode="outlined"
       style={{ marginTop: 10, borderColor: colors.primary }}
@@ -54,6 +56,7 @@ const SyllabusDisplay = ({ classname, imageUrl }) => {
               try {
                 await storage().ref(getImageUrlName(classname)).delete();
                 Alert.alert('Success', 'Image deleted successfully!');
+                navigation.goBack();
               } catch (error) {
                 Alert.alert('Error', 'Image deletion failed: ' + error.message);
               }
@@ -159,18 +162,18 @@ const SyllabusScreen = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 20 }}>
-  { loading && <ActivityIndicator size="large" color={colors.primary} />}
-  <SyllabusDisplay classname="Nursery" imageUrl={NurseryImageUrl} />
-  <SyllabusDisplay classname="Prep" imageUrl={PrepImageUrl} />
-  <SyllabusDisplay classname="Class 1" imageUrl={Class1ImageUrl} />
-  <SyllabusDisplay classname="Class 2" imageUrl={Class2ImageUrl} />
-  <SyllabusDisplay classname="Class 3" imageUrl={Class3ImageUrl} />
-  <SyllabusDisplay classname="Class 4" imageUrl={Class4ImageUrl} />
-  <SyllabusDisplay classname="Class 5" imageUrl={Class5ImageUrl} />
-  <SyllabusDisplay classname="Class 6" imageUrl={Class6ImageUrl} />
-  <SyllabusDisplay classname="Class 7" imageUrl={Class7ImageUrl} />
-  <SyllabusDisplay classname="Class 8" imageUrl={Class8ImageUrl} />
-</ScrollView>
+      {loading && <ActivityIndicator size="large" color={colors.primary} />}
+      <SyllabusDisplay classname="Nursery" imageUrl={NurseryImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Prep" imageUrl={PrepImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 1" imageUrl={Class1ImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 2" imageUrl={Class2ImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 3" imageUrl={Class3ImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 4" imageUrl={Class4ImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 5" imageUrl={Class5ImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 6" imageUrl={Class6ImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 7" imageUrl={Class7ImageUrl} navigation={navigation} />
+      <SyllabusDisplay classname="Class 8" imageUrl={Class8ImageUrl} navigation={navigation} />
+    </ScrollView>
   );
 };
 

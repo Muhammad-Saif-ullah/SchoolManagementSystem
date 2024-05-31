@@ -58,10 +58,6 @@ const ViewFeeStatus = ({ route }) => {
   );
 };
 
-{/* feeStatus && ( */ }
-{/* ) */ }
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

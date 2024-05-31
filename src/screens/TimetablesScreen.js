@@ -32,10 +32,12 @@ const getImageUrlName = (classname) => {
   }
 };
 
-const TimetableDisplay = ({ classname, imageUrl }) => {
+const TimetableDisplay = ({ classname, imageUrl, navigation }) => {
   return <>
     <Text style={styles.heading}>{classname}</Text>
-    {imageUrl && <Image source={{ uri: imageUrl }} style={styles.image} />}
+    {imageUrl ? <Image source={{ uri: imageUrl }} style={styles.image} />
+      : <Text style={{ textAlign: 'center', marginTop: 10 }}>No image uploaded</Text>
+    }
     <Button
       mode="outlined"
       style={{ marginTop: 10, borderColor: colors.primary }}
@@ -54,6 +56,7 @@ const TimetableDisplay = ({ classname, imageUrl }) => {
               try {
                 await storage().ref(getImageUrlName(classname)).delete();
                 Alert.alert('Success', 'Image deleted successfully!');
+                navigation.goBack();
               } catch (error) {
                 Alert.alert('Error', 'Image deletion failed: ' + error.message);
               }
@@ -157,16 +160,16 @@ const TimetableScreen = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={{ padding: 20 }}>
-      <TimetableDisplay classname="Nursery" imageUrl={NurseryImageUrl} />
-      <TimetableDisplay classname="Prep" imageUrl={PrepImageUrl} />
-      <TimetableDisplay classname="Class 1" imageUrl={Class1ImageUrl} />
-      <TimetableDisplay classname="Class 2" imageUrl={Class2ImageUrl} />
-      <TimetableDisplay classname="Class 3" imageUrl={Class3ImageUrl} />
-      <TimetableDisplay classname="Class 4" imageUrl={Class4ImageUrl} />
-      <TimetableDisplay classname="Class 5" imageUrl={Class5ImageUrl} />
-      <TimetableDisplay classname="Class 6" imageUrl={Class6ImageUrl} />
-      <TimetableDisplay classname="Class 7" imageUrl={Class7ImageUrl} />
-      <TimetableDisplay classname="Class 8" imageUrl={Class8ImageUrl} />
+      <TimetableDisplay classname="Nursery" imageUrl={NurseryImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Prep" imageUrl={PrepImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 1" imageUrl={Class1ImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 2" imageUrl={Class2ImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 3" imageUrl={Class3ImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 4" imageUrl={Class4ImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 5" imageUrl={Class5ImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 6" imageUrl={Class6ImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 7" imageUrl={Class7ImageUrl} navigation={navigation} />
+      <TimetableDisplay classname="Class 8" imageUrl={Class8ImageUrl} navigation={navigation} />
     </ScrollView>
   );
 };

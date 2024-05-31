@@ -21,8 +21,6 @@ import ViewFeeStatus from '../screens/ViewFeeStatus';
 import ViewTimetable from '../screens/ViewTimetable';
 import ViewSyllabus from '../screens/ViewSyllabus';
 
-import ClassesScheduleScreen from '../screens/ClassesScheduleScreen';
-
 import Header from '../components/Header';
 
 import WelcomeScreen from '../screens/WelcomeScreen';
@@ -70,7 +68,6 @@ const AppNavigator = () => {
         <Stack.Screen name="TeacherPortalScreen" component={Teacher_Portal_Screen} />
         <Stack.Screen name="LoginAsStudent" component={LoginAsStudent} />
         <Stack.Screen name="StudentPortal" component={StudentPortal} />
-        <Stack.Screen name="ClassesScheduleScreen" component={ClassesScheduleScreen} />
         <Stack.Screen name="ViewMarks" component={ViewMarks} />
         <Stack.Screen name="ViewPreviousRecords" component={ViewPreviousRecords} />
         <Stack.Screen name="ViewFeeStatus" component={ViewFeeStatus} />
